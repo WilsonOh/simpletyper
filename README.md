@@ -1,5 +1,5 @@
 # simpletyper
-simpletyper is a fast and clean Text-based User Interface (TUI) app for testing your typing speed.
+simpletyper is a fast and clean Text-based User Interface (TUI) app powered by [textual](https://github.com/Textualize/textual) for testing your typing speed.
 
 
 ## Demo:
