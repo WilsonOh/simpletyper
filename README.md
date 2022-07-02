@@ -1,6 +1,10 @@
 # simpletyper
 simpletyper is a fast and clean Text-based User Interface (TUI) app for testing your typing speed.
 
+
+## Demo:
+https://user-images.githubusercontent.com/87934749/177007196-da08f686-568a-4113-9850-81c835fc2713.mp4
+
 ## Features
 - Clean UI
 - Arbitrarily long passages randomly generated from up to 25000 english words
@@ -21,7 +25,8 @@ simpletyper is a fast and clean Text-based User Interface (TUI) app for testing 
 The app has 3 parameters: `count_down`, `file_name` and `num_words`.
 `count_down` refers to the timer in "count down mode",
 `num_words` refers to the number of words to be used in the speed test,
-and `file_name` refers to the file from which the app will source the words. (i.e. from `simpletyper/words/{filename}`)
+and `file_name` refers to the file from which the app will source the words. (i.e. from `simpletyper/words/{filename}`)<br>
+You can press `escape` to quit out of the app at anytime
 
 ### Flags
 The app can be run with 3 flags to set the parameters explained above:
