@@ -65,8 +65,10 @@ class TextBox(Widget):
         self.user_input = ""
 
     def set_end_screen(self, counter: int) -> None:
-        if counter == 0:
+        if counter == 0 and not self.count_down:
             counter = 1
+        elif self.count_down and counter == -1:
+            counter = 0
         timing = abs(self.count_down - counter) if self.count_down else counter
         if self.count_down:
             wpm = (len(self.user_input.split()) / timing) * 60

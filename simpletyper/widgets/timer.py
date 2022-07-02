@@ -3,6 +3,7 @@ from rich.console import RenderableType
 from rich.panel import Panel
 from textual.reactive import Reactive
 from textual.widget import Widget
+from simpletyper.events.gamedone import GameDone
 
 
 class StopWatchTimer(Widget):
