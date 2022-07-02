@@ -17,12 +17,15 @@ from textual.widget import Widget
 from textual.widgets import Footer
 
 
+WORD_LIST_PATH = Path(__file__).parent.resolve() / "words"
+
+
 counter = 0
 stop = False
 
 
 def load_words(file: str, limit: int) -> str:
-    with open(f"./words/{file}") as f:
+    with open(WORD_LIST_PATH / file) as f:
         words = random.choices(f.read().split("\n"), k=limit)
         return (" ".join(words)).strip()
 
@@ -223,8 +226,7 @@ class PyType(App):
 
 
 def main():
-    word_list_path = Path(__file__).resolve().parent / "words"
-    word_files = [file.stem for file in word_list_path.iterdir()]
+    word_files = [file.stem for file in WORD_LIST_PATH.iterdir()]
     parser = argparse.ArgumentParser(description="Typing Speed Test Powered by Textual")
     parser.add_argument(
         "-f",
