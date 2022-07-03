@@ -1,3 +1,5 @@
+from datetime import timedelta
+
 from rich.align import Align
 from rich.console import RenderableType
 from rich.panel import Panel
@@ -15,7 +17,7 @@ class StopWatchTimer(Widget):
     def update(self) -> None:
         if self.start:
             self.counter += 1
-            self.display_text = str(self.counter) + "s"
+            self.display_text = str(timedelta(seconds=self.counter))
             self.refresh()
 
     def on_mount(self) -> None:
@@ -40,5 +42,5 @@ class CountDownTimer(StopWatchTimer):
                 self.emit_no_wait(GameDone(self))
                 self.start = False
             self.counter -= 1
-            self.display_text = str(self.counter) + "s"
+            self.display_text = str(timedelta(seconds=self.counter))
             self.refresh()

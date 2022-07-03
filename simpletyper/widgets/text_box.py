@@ -29,26 +29,33 @@ class TextBox(Widget):
         self.text = load_words(file, num_words)
         self.count_down = count_down
         self.stop = False
+        self.keypresses = 0
+        self.mispresses = 0
 
     def update_text(self, c: str) -> None:
         if self.stop:
             return
-        curr_idx = len(self.user_input) + 1
+        prev_idx = len(self.user_input)
+        curr_idx = prev_idx + 1
         if curr_idx >= len(self.text):
             self.emit_no_wait(GameDone(self))
             return
         self.user_input += c
+        self.keypresses += 1
         curr_char = self.text[curr_idx]
-        before = Text()
-
-        for char1, char2 in zip(str(self.user_input[:curr_idx]), self.text):
-            before.append(
-                Text(char2, style=("green bold" if char1 == char2 else "red underline"))
-            )
-
+        previous_part = self.display_text[:prev_idx]
+        correct = self.text[prev_idx] == self.user_input[prev_idx]
+        if not correct:
+            self.mispresses += 1
+        previous_word = Text(
+            self.text[prev_idx],
+            style=("green bold" if correct else "red underline"),
+        )
         after: Text = self.display_text[curr_idx + 1 :]
         new_char: Text = Text(curr_char, style="black on white")
-        self.display_text = Text.assemble(before + new_char + after, justify="center")
+        self.display_text = Text.assemble(
+            previous_part, previous_word, new_char, after, justify="center"
+        )
 
     def init_text(self) -> None:
         self.display_text = Text.assemble(
@@ -71,19 +78,20 @@ class TextBox(Widget):
             counter = 0
         timing = abs(self.count_down - counter) if self.count_down else counter
         if self.count_down:
-            wpm = (len(self.user_input.split()) / timing) * 60
+            wpm = ((len(self.user_input) / 5) / timing) * 60
         else:
-            wpm = (len(self.user_input.split()) / counter) * 60
-        accuracy = (
-            sum([c1 == c2 for c1, c2 in zip(self.text, self.user_input)])
-            / len(self.user_input)
-            * 100
-        )
+            wpm = ((len(self.user_input) / 5) / counter) * 60
+        # accuracy = (
+        #     sum([c1 == c2 for c1, c2 in zip(self.text, self.user_input)])
+        #     / len(self.user_input)
+        #     * 100
+        # )
+        accuracy = ((self.keypresses - self.mispresses) / self.keypresses) * 100
         screen = Text.from_markup(
             f"""
     Typed [green]{len(self.user_input.split())}[/] words and {len(self.user_input)} characters in {timing}s
     Words Per Minute: [green underline bold]{wpm:.2f}[/]
-    Characters Per Minute: [purple bold]{(len(self.user_input)/timing) * 60}[/]
+    Characters Per Minute: [purple bold]{(len(self.user_input)/timing) * 60:.2f}[/]
     Accuracy: [blue]{accuracy:.2f}%[/]
     Press [magenta]r[/] to restart or Escape to quit
             """,
@@ -100,7 +108,7 @@ class TextBox(Widget):
         before: Text = self.display_text[:curr_idx]
         after: Text = Text(self.text[curr_idx + 1 :], style="#909090")
         new_char: Text = Text(curr_char, style="black on white")
-        self.display_text = before + new_char + after
+        self.display_text = Text.assemble(before, new_char, after, justify="center")
 
     def render(self) -> RenderableType:
         return Panel(

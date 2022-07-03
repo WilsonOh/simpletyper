@@ -100,7 +100,5 @@ def main():
     PyType.run(file=args.file, num_words=args.num_words, count_down=args.count_down)
 
 
-#
-#
-# if __name__ == "__main__":
-#     main()
+if __name__ == "__main__":
+    main()
