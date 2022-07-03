@@ -1,6 +1,6 @@
 import argparse
 import string
-from typing import Type
+from time import gmtime, strftime
 
 from textual.app import App
 from textual.driver import Driver
@@ -8,16 +8,17 @@ from textual.events import Key
 from textual.widgets import Footer
 
 from simpletyper.events.gamedone import GameDone
+from simpletyper.events.progress import ReportProgress
 from simpletyper.utils.load_words import WORD_LIST_PATH
 from simpletyper.widgets.text_box import TextBox
-from simpletyper.widgets.timer import CountDownTimer, StopWatchTimer
+from simpletyper.widgets.hud import CountDownTimer, StopWatchTimer, Progress
 
 
 class PyType(App):
     def __init__(
         self,
         screen: bool = True,
-        driver_class: Type[Driver] | None = None,
+        driver_class: type[Driver] | None = None,
         log: str = "",
         log_verbosity: int = 1,
         title: str = "Textual Application",
@@ -30,9 +31,12 @@ class PyType(App):
         self.text_box = TextBox(file=file, num_words=num_words, count_down=count_down)
         if count_down:
             self.timer = CountDownTimer(count_down)
-            self.timer.display_text = f"{count_down}s"
         else:
             self.timer = StopWatchTimer()
+        self.timer.timer_display = strftime(
+            "%M minutes and %S seconds", gmtime(count_down)
+        )
+        self.progress_bar = Progress(num_words=len(self.text_box.text))
         self.count_down = count_down
 
     async def on_load(self) -> None:
@@ -41,19 +45,22 @@ class PyType(App):
 
     async def on_mount(self) -> None:
         await self.view.dock(Footer(), edge="bottom")
-        await self.view.dock(self.timer, edge="top", size=5)
-        await self.view.dock(self.text_box, edge="top")
+        await self.view.dock(self.timer, size=5)
+        await self.view.dock(self.progress_bar, size=5)
+        await self.view.dock(self.text_box)
 
     def on_key(self, event: Key) -> None:
         if self.text_box.stop:
+            self.timer.start = False
             if event.key == "r":
                 self.text_box.reset()
-                self.timer.start = False
                 if self.count_down:
                     self.timer.counter = self.count_down
                 else:
                     self.timer.counter = 0
-                self.timer.display_text = str(self.timer.counter) + "s"
+                self.timer.timer_display = strftime(
+                    "%M minutes and %S seconds", gmtime(self.count_down)
+                )
             return
         self.timer.start = True
         if event.key in string.printable:
@@ -64,8 +71,11 @@ class PyType(App):
     def handle_game_done(self, _: GameDone) -> None:
         self.timer.start = False
         self.text_box.set_end_screen(self.timer.counter)
-        self.timer.display_text = "GAME OVER"
+        self.timer.timer_display = "GAME OVER"
         self.text_box.stop = True
+
+    def handle_report_progress(self, event: ReportProgress) -> None:
+        self.progress_bar.completion = event.completion
 
 
 def main():
@@ -78,7 +88,7 @@ def main():
         help="The word list file",
         choices=word_files,
         type=str,
-        default="top2500",
+        default="top250",
     )
     parser.add_argument(
         "-n",
@@ -97,7 +107,12 @@ def main():
         default=0,
     )
     args = parser.parse_args()
-    PyType.run(file=args.file, num_words=args.num_words, count_down=args.count_down)
+    PyType.run(
+        file=args.file,
+        num_words=args.num_words,
+        count_down=args.count_down,
+        log="textual.log",
+    )
 
 
 if __name__ == "__main__":

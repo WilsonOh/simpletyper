@@ -1,4 +1,5 @@
 import os
+import math
 
 from rich.align import Align
 from rich.console import RenderableType
@@ -8,6 +9,7 @@ from textual.reactive import Reactive
 from textual.widget import Widget
 
 from simpletyper.events.gamedone import GameDone
+from simpletyper.events.progress import ReportProgress
 from simpletyper.utils.load_words import load_words
 
 
@@ -56,6 +58,7 @@ class TextBox(Widget):
         self.display_text = Text.assemble(
             previous_part, previous_word, new_char, after, justify="center"
         )
+        self.emit_no_wait(ReportProgress(sender=self, completion=len(self.user_input)))
 
     def init_text(self) -> None:
         self.display_text = Text.assemble(
@@ -72,25 +75,31 @@ class TextBox(Widget):
         self.user_input = ""
 
     def set_end_screen(self, counter: int) -> None:
-        if counter == 0 and not self.count_down:
+        if counter <= 0 and not self.count_down:
             counter = 1
-        elif self.count_down and counter == -1:
+        elif self.count_down and counter < 0:
             counter = 0
-        timing = abs(self.count_down - counter) if self.count_down else counter
-        if self.count_down:
-            wpm = ((len(self.user_input) / 5) / timing) * 60
         else:
-            wpm = ((len(self.user_input) / 5) / counter) * 60
-        # accuracy = (
-        #     sum([c1 == c2 for c1, c2 in zip(self.text, self.user_input)])
-        #     / len(self.user_input)
-        #     * 100
-        # )
+            counter = math.floor(counter)
+        timing = abs(self.count_down - counter) if self.count_down else counter
+        if timing == 0:
+            timing = 1
+        uncorrected_mistakes = sum(
+            [c1 != c2 for c1, c2 in zip(self.user_input, self.text)]
+        )
+        raw_wpm = ((len(self.user_input) / 5) / timing) * 60
+        net_wpm = (
+            ((len(self.user_input) / 5) - uncorrected_mistakes / 5) / timing
+        ) * 60
+        if net_wpm < 0:
+            net_wpm = 0
         accuracy = ((self.keypresses - self.mispresses) / self.keypresses) * 100
         screen = Text.from_markup(
             f"""
-    Typed [green]{len(self.user_input.split())}[/] words and {len(self.user_input)} characters in {timing}s
-    Words Per Minute: [green underline bold]{wpm:.2f}[/]
+    Typed [green]{len(self.user_input.split())}[/] words and [green]{len(self.user_input)}[/] characters in [blue]{timing}s[/]
+    Uncorrected Mistakes: {uncorrected_mistakes}
+    Gross Words Per Minute: [green underline bold]{raw_wpm:.2f}[/]
+    Net Words Per Minute: [green underline bold]{net_wpm:.2f}[/]
     Characters Per Minute: [purple bold]{(len(self.user_input)/timing) * 60:.2f}[/]
     Accuracy: [blue]{accuracy:.2f}%[/]
     Press [magenta]r[/] to restart or Escape to quit
@@ -109,6 +118,7 @@ class TextBox(Widget):
         after: Text = Text(self.text[curr_idx + 1 :], style="#909090")
         new_char: Text = Text(curr_char, style="black on white")
         self.display_text = Text.assemble(before, new_char, after, justify="center")
+        self.emit_no_wait(ReportProgress(sender=self, completion=len(self.user_input)))
 
     def render(self) -> RenderableType:
         return Panel(
@@ -117,5 +127,5 @@ class TextBox(Widget):
                 vertical="middle",
                 width=os.get_terminal_size()[0] // 2,
             ),
-            title="PyType",
+            title=Text.from_markup("[yellow]SimpleTyper[/]"),
         )
