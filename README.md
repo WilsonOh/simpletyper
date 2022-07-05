@@ -3,12 +3,15 @@ simpletyper is a fast and clean Text-based User Interface (TUI) app powered by [
 
 
 ## Demo:
-https://user-images.githubusercontent.com/87934749/177007196-da08f686-568a-4113-9850-81c835fc2713.mp4
+https://user-images.githubusercontent.com/87934749/177049034-b80e99e8-d2bf-46b7-8d8a-77b642456487.mp4
 
 ## Features
 - Clean UI
 - Arbitrarily long passages randomly generated from up to 25000 english words
 - Count down mode and relax mode
+
+## Limitations
+- The "screen" of the app cannot scroll, so it is reccomended to choose the number of words which will fit in one screen
 
 ## Installation
 ### Using `poetry`
