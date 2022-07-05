@@ -58,6 +58,7 @@ class PyType(App):
                     self.timer.counter = self.count_down
                 else:
                     self.timer.counter = 0
+                self.progress_bar.completion = 0
                 self.timer.timer_display = strftime(
                     "%M minutes and %S seconds", gmtime(self.count_down)
                 )
