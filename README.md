@@ -11,7 +11,7 @@ https://user-images.githubusercontent.com/87934749/177049034-b80e99e8-d2bf-46b7-
 - Count down mode and relax mode
 
 ## Limitations
-- The "screen" of the app cannot scroll, so it is reccomended to choose the number of words which will fit in one screen
+- The "screen" of the app cannot scroll, so it is reccomended to choose the number of words that will fit in one screen
 
 ## Installation
 ### Using `poetry`
@@ -20,7 +20,7 @@ https://user-images.githubusercontent.com/87934749/177049034-b80e99e8-d2bf-46b7-
 3. Run the app with `simpletyper`
 ---
 ### Using `pip`
-1. Run `python -m pip install git+https://github.com/WilsonOh/simpletyper.git`
+1. Run `pip install simpletyper` or `pip install git+https://github.com/WilsonOh/simpletyper.git`
 2. Run the app with `simpletyper`
 
 ## Usage
@@ -35,7 +35,7 @@ You can press `escape` to quit out of the app at anytime
 The app can be run with 3 flags to set the parameters explained above:
 - `-n` or `--num_words` to set `num_words`
 - `-t` or `--timer` to set the `count_down` timer
-- `-f` or `--file` to set the word file
+- `-f` or `--file` to set the file to source words from
 - `-h` or `--help` to display a help message 
 ---
 #### Running the game without any arguments will run the game using the default parameters of `num_words` = 20, `count_down` = 0 and `file` = top2500.
