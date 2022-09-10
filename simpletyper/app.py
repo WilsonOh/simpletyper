@@ -41,6 +41,7 @@ class PyType(App):
 
     async def on_load(self) -> None:
         await self.bind("escape", "quit", "Quit the app")
+        await self.bind("ctrl+r", "reset", "Reset")
         self.text_box.init_text()
 
     async def on_mount(self) -> None:
@@ -49,25 +50,28 @@ class PyType(App):
         await self.view.dock(self.progress_bar, size=5)
         await self.view.dock(self.text_box)
 
+    def action_reset(self) -> None:
+        self.text_box.reset()
+        if self.count_down:
+            self.timer.counter = self.count_down
+        else:
+            self.timer.counter = 0
+        self.progress_bar.completion = 0
+        self.timer.timer_display = strftime(
+            "%M minutes and %S seconds", gmtime(self.count_down)
+        )
+
     def on_key(self, event: Key) -> None:
         if self.text_box.stop:
             self.timer.start = False
             if event.key == "r":
-                self.text_box.reset()
-                if self.count_down:
-                    self.timer.counter = self.count_down
-                else:
-                    self.timer.counter = 0
-                self.progress_bar.completion = 0
-                self.timer.timer_display = strftime(
-                    "%M minutes and %S seconds", gmtime(self.count_down)
-                )
-            return
-        self.timer.start = True
-        if event.key in string.printable:
-            self.text_box.update_text(event.key)
-        if event.key == "ctrl+h":
-            self.text_box.delete_text()
+                self.action_reset()
+        else:
+            self.timer.start = True
+            if event.key in string.printable:
+                self.text_box.update_text(event.key)
+            if event.key == "ctrl+h":
+                self.text_box.delete_text()
 
     def handle_game_done(self, _: GameDone) -> None:
         self.timer.start = False
