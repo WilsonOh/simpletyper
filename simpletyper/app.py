@@ -51,6 +51,7 @@ class PyType(App):
         await self.view.dock(self.text_box)
 
     def action_reset(self) -> None:
+        self.timer.start = False
         self.text_box.reset()
         if self.count_down:
             self.timer.counter = self.count_down
