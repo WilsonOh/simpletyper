@@ -29,7 +29,10 @@ The app has 3 parameters: `count_down`, `file_name` and `num_words`.
 `count_down` refers to the timer in "count down mode",
 `num_words` refers to the number of words to be used in the speed test,
 and `file_name` refers to the file from which the app will source the words. (i.e. from `simpletyper/words/{filename}`)<br>
-You can press `escape` to quit out of the app at anytime
+
+### Keybindings
+- `Escape` / `Ctrl+C` to quit out of the app
+- `Ctrl+R` to reset the app
 
 ### Flags
 The app can be run with 3 flags to set the parameters explained above:
@@ -38,8 +41,9 @@ The app can be run with 3 flags to set the parameters explained above:
 - `-f` or `--file` to set the file to source words from
 - `-h` or `--help` to display a help message 
 ---
-#### Running the game without any arguments will run the game using the default parameters of `num_words` = 20, `count_down` = 0 and `file` = top2500.
-#### Omitting the `num_words` flag will simply run the app in "relax mode", where you can take all the time you need to complete the passage.
+> **Note**
+Running the game without any arguments will run the game using the default parameters of `num_words` = 20, `count_down` = 0 and `file` = top2500.
+#### Omitting the `timer` flag will simply run the app in "relax mode", where you can take all the time you need to complete the passage.
 An example command would be
 ```console
 simpletyper -n 30 -t 10
