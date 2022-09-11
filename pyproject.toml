@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "simpletyper"
-version = "0.2.0"
+version = "0.2.1"
 description = "Typing speed tester powered by Textual"
 authors = ["Wilson Oh <oh.wilson123@gmail.com>"]
 
