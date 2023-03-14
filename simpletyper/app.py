@@ -33,9 +33,7 @@ class PyType(App):
             self.timer = CountDownTimer(count_down)
         else:
             self.timer = StopWatchTimer()
-        self.timer.timer_display = strftime(
-            "%M minutes and %S seconds", gmtime(count_down)
-        )
+        self.timer.timer_display = strftime("%M minutes and %S seconds", gmtime(count_down))
         self.progress_bar = Progress(num_words=len(self.text_box.text))
         self.count_down = count_down
 
@@ -58,9 +56,7 @@ class PyType(App):
         else:
             self.timer.counter = 0
         self.progress_bar.completion = 0
-        self.timer.timer_display = strftime(
-            "%M minutes and %S seconds", gmtime(self.count_down)
-        )
+        self.timer.timer_display = strftime("%M minutes and %S seconds", gmtime(self.count_down))
 
     def on_key(self, event: Key) -> None:
         if self.text_box.stop:
@@ -117,7 +113,7 @@ def main():
         file=args.file,
         num_words=args.num_words,
         count_down=args.count_down,
-        log="textual.log",
+        # log="textual.log",
     )
 
 
